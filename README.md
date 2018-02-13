@@ -9,7 +9,7 @@ a search bar.  Users can interact in following ways on the page:
 - Search a certain station among the five via search bar on the left, and the list will update correspondingly, so will markers on the map.
 
 ## Run the application
-Download `index.html` and `js` folder into the same folder.  Open `index.html` in browser, and you can start use this app.
+Download `index.html`, `css` and `js` folder into the same folder.  Open `index.html` in browser, and you can start use this app.
 
 ## License
 The content of this repository is licensed under **MIT License**.
