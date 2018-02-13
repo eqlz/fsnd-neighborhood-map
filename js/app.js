@@ -43,7 +43,7 @@ function initMap() {
 
     // call function, markerMouseOut where the mouse moves away from a marker, the marker will
     // stop bouncing
-    markerMouseOut(marker);
+    markerMouseOutEvent(marker);
   }
 
   // filter out list based on input that is typed in
@@ -116,7 +116,7 @@ function markerClickEvent(marker) {
 
 // this function will stop a marker from bouncing when a mouse moves out of
 // a marker
-function markerMouseOut(marker) {
+function markerMouseOutEvent(marker) {
   marker.addListener('mouseout', function() {
     this.setAnimation(null);
   }); 
