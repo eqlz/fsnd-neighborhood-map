@@ -84,9 +84,7 @@ function initMap() {
         success: function(response) {
           var stationName = response[1][0];
           var url = 'https://en.wikipedia.org/wiki/' + stationName;
-          infoWindow.setContent('<div>' + marker.title + '</div>'
-              + '<br>'
-              + '<a href="' + url + '">' + stationName + '</a>');            
+          infoWindow.setContent('<div>' + marker.title + '</div>' + '<br>' + '<a href="' + url + '">' + stationName + '</a>');            
         },
         error: function(request, status, error) {
           if(request.status == 400) {
@@ -128,9 +126,7 @@ function populateInfoWindow(marker) {
     success: function(response) {
       var stationName = response[1][0];
       var url = 'https://en.wikipedia.org/wiki/' + stationName;
-      infoWindow.setContent('<div>' + marker.title + '</div>'
-          + '<br>'
-          + '<a href="' + url + '">' + stationName + '</a>');            
+      infoWindow.setContent('<div>' + marker.title + '</div>' + '<br>' + '<a href="' + url + '">' + stationName + '</a>');            
     },
     error: function(request, status, error) {
       if(request.status == 400) {
@@ -165,7 +161,7 @@ function filterList() {
   for (i = 0; i < li.length; i++) {
     
     // get the station name of each <li> represents
-    stationName = li[i].innerHTML
+    stationName = li[i].innerHTML;
     
     // turn station name into uppercase
     stationNameUpperCase = stationName.toUpperCase();
