@@ -88,7 +88,7 @@ function initMap() {
       
       // the maker will bounce when the corresponding station in list view is clicked
       marker.setAnimation(google.maps.Animation.BOUNCE);
-      setTimeout(function(){marker.setAnimation(null)}, 2 * 750);
+      setTimeout(function(){marker.setAnimation(null);}, 2 * 750);
       
       infoWindow.open(map, marker);
     };
