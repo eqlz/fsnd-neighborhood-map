@@ -115,7 +115,7 @@ function initMap() {
 // this function handles error related to Google Maps API
 function googleMapsError() {
     alert("Sorry, not able to load the map");
-};
+}
 
 // this function will populate an info window and make a marker bounce when
 // a marker is clicked
