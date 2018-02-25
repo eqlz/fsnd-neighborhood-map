@@ -37,13 +37,11 @@ function initMap() {
     // push each marker into markers array
     markers.push(marker);
 
+    new google.maps.event.trigger(marker, 'click');
+
     // call function, markerClickEven where a marker is clicked, an info window will pop out
     // and the marker will bounce
-    markerClickEvent(marker, infoWindow);
-
-    // call function, markerMouseOut where the mouse moves away from a marker, the marker will
-    // stop bouncing
-    markerMouseOutEvent(marker);
+    markerClickEvent(marker, infoWindow);    
   }
 
   // create a ViewModel 
@@ -56,57 +54,57 @@ function initMap() {
     // put each marker in array markers into observableArray stationList
     markers.forEach(function(stationItem) {
       self.stationList.push(stationItem);
-    });    
-
-    var infoWindow = new google.maps.InfoWindow();
+    });
     
     // create an info windown when a station item in the list view is clicked
-    this.populateInfoWindow = function(marker) {
-          
-      // create URL that is for wikipedia API call
-      var stationStr = marker.title.replace(/ /g, "+");
-      var wikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' +
-          stationStr + '&format=json&callback=wikiCallback';
-
-      // make ajax call to retrieve information from wikipedia
-      $.ajax({
-        url: wikiUrl,
-        dataType: "jsonp",
-        success: function(response) {
-          var stationName = response[1][0];
-          var url = 'https://en.wikipedia.org/wiki/' + stationName;
-          infoWindow.setContent('<div>' + marker.title + '</div>' + '<br>' + '<a href="' + url + '">' + stationName + '</a>');            
-        },
-        error: function(request, status, error) {
-          if(request.status == 400) {
-            alert(request.responseTest);
-          } else {
-            alert("Sorry, something is wrong here.");
-          }
-        }
-      });
-      
-      // the maker will bounce when the corresponding station in list view is clicked
-      marker.setAnimation(google.maps.Animation.BOUNCE);
-      setTimeout(function(){marker.setAnimation(null);}, 2 * 750);
-      
-      infoWindow.open(map, marker);
+    this.populateInfoWindowKo = function(marker) {
+      new google.maps.event.trigger(marker, 'click');
+      markerClickEvent(marker, infoWindow);
     };
 
     this.query = ko.observable("");
 
     // filter the list based on user input
-    self.stationListFiltered = ko.computed(function() {
+    /*self.stationListFiltered = ko.computed(function() {
       var query = self.query().toLowerCase();
       if(!query) {
         return self.stationList();
       } else {
         return ko.utils.arrayFilter(self.stationList(), function(station) {
+          console.log(station.title);
+          station.setMap(map);
           return station.title.toLowerCase().startsWith(query);
         });
       }
-    });
-    
+    });*/
+
+    // create a temporary observableArray
+    this.stationListTemp = ko.observableArray([]);
+
+    self.stationListFiltered = ko.computed(function() {
+      var query = self.query().toLowerCase();
+      if(!query) {
+        self.stationList().forEach(function(station) {
+          station.setMap(map);
+        });
+        return self.stationList();
+      } else {
+        // empty stationListTemp before looping through stationList
+        self.stationListTemp([]);
+        self.stationList().forEach(function(station) {
+          // if the query matches any station's title
+          if (station.title.toLowerCase().startsWith(query)) {
+            self.stationListTemp().push(station);
+            station.setMap(map);
+          }
+          else {
+            station.setMap(null);
+          }
+        });
+        return self.stationListTemp();
+      }
+    });   
+  
   };
 
   ko.applyBindings(new viewModel()); 
@@ -115,29 +113,21 @@ function initMap() {
 // this function handles error related to Google Maps API
 function googleMapsError() {
     alert("Sorry, not able to load the map");
-}
+};
 
 // this function will populate an info window and make a marker bounce when
 // a marker is clicked
 function markerClickEvent(marker, infowindow) {
   marker.addListener('click', function() {
+    var self = this;
     populateInfoWindow(this, infowindow);
-    this.setAnimation(google.maps.Animation.BOUNCE);
+    self.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function(){self.setAnimation(null);}, 2 * 750);
   });
-}
-
-// this function will stop a marker from bouncing when a mouse moves out of
-// a marker
-function markerMouseOutEvent(marker) {
-  marker.addListener('mouseout', function() {
-    this.setAnimation(null);
-  }); 
-}
+};
 
 // this function will populate the info window when a marker is clicked
-function populateInfoWindow(marker, infowindow) {
-  //var infoWindow = new google.maps.InfoWindow();
-  
+function populateInfoWindow(marker, infowindow) { 
   // create URL for wikipedia API call
   var stationStr = marker.title.replace(/ /g, "+");
   var wikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' +
@@ -146,20 +136,20 @@ function populateInfoWindow(marker, infowindow) {
   // make an ajax call to retrieve information from wikipedia
   $.ajax({
     url: wikiUrl,
-    dataType: "jsonp",
-    success: function(response) {
+    dataType: "jsonp"
+  })
+    .done(function(response) {
       var stationName = response[1][0];
       var url = 'https://en.wikipedia.org/wiki/' + stationName;
       infowindow.setContent('<div>' + marker.title + '</div>' + '<br>' + '<a href="' + url + '">' + stationName + '</a>');            
-    },
-    error: function(request, status, error) {
+    })
+    .fail(function(request, status, error) {
       if(request.status == 400) {
         alert(request.responseTest);
       } else {
         alert("Sorry, something went wrong");
       }
-    }
-  });
+    })
 
   infowindow.open(map, marker);
-}
+};
