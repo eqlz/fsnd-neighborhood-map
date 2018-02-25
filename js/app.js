@@ -113,7 +113,7 @@ function initMap() {
 // this function handles error related to Google Maps API
 function googleMapsError() {
     alert("Sorry, not able to load the map");
-};
+}
 
 // this function will populate an info window and make a marker bounce when
 // a marker is clicked
@@ -124,7 +124,7 @@ function markerClickEvent(marker, infowindow) {
     self.setAnimation(google.maps.Animation.BOUNCE);
     setTimeout(function(){self.setAnimation(null);}, 2 * 750);
   });
-};
+}
 
 // this function will populate the info window when a marker is clicked
 function populateInfoWindow(marker, infowindow) { 
@@ -149,7 +149,7 @@ function populateInfoWindow(marker, infowindow) {
       } else {
         alert("Sorry, something went wrong");
       }
-    })
+    });
 
   infowindow.open(map, marker);
-};
+}
